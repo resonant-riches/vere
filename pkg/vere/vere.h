@@ -1259,7 +1259,7 @@
       /* u3_unix_save(): save file undir .../.urb/put or bail.
       */
         void
-        u3_unix_save(c3_c* pax_c, u3_atom pad);
+        u3_unix_save(const c3_c* pax_c, u3_atom pad);
 
       /* u3_unix_cane(): true iff (unix) path is canonical.
       */
@@ -1269,7 +1269,7 @@
       /* u3_unix_initial_into_card(): create initial filesystem sync card.
       */
         u3_noun
-        u3_unix_initial_into_card(c3_c* arv_c);
+        u3_unix_initial_into_card(const c3_c* arv_c);
 
       /* u3_unix_io_init(): initialize storage.
       */

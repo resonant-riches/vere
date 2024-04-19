@@ -174,7 +174,7 @@ u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
 /* _unix_string_to_knot(): convert c unix path component to $knot
 */
 static u3_atom
-_unix_string_to_knot(c3_c* pax_c)
+_unix_string_to_knot(const c3_c* pax_c)
 {
   u3_assert(pax_c);
   //  XX  this can happen if we encounter a file without an extension.
@@ -224,7 +224,7 @@ _unix_knot_to_string(u3_atom pon)
 /* _unix_down(): descend path.
 */
 static c3_c*
-_unix_down(c3_c* pax_c, c3_c* sub_c)
+_unix_down(const c3_c* pax_c, const c3_c* sub_c)
 {
   c3_w pax_w = strlen(pax_c);
   c3_w sub_w = strlen(sub_c);
@@ -243,7 +243,7 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
 **  c string must begin with the pier path plus mountpoint
 */
 static u3_noun
-_unix_string_to_path_helper(c3_c* pax_c)
+_unix_string_to_path_helper(const c3_c* pax_c)
 {
   u3_noun not;
 
@@ -269,7 +269,7 @@ _unix_string_to_path_helper(c3_c* pax_c)
   }
 }
 static u3_noun
-_unix_string_to_path(u3_unix* unx_u, c3_c* pax_c)
+_unix_string_to_path(const u3_unix* unx_u, const c3_c* pax_c)
 {
   pax_c += strlen(unx_u->pax_c) + 1;
   c3_c* pox_c = strchr(pax_c, '/');
@@ -290,7 +290,7 @@ _unix_string_to_path(u3_unix* unx_u, c3_c* pax_c)
 /* _unix_mkdirp(): recursive mkdir of dirname of pax_c.
 */
 static void
-_unix_mkdirp(c3_c* pax_c)
+_unix_mkdirp(const c3_c* pax_c)
 {
   c3_c* fas_c = strchr(pax_c + 1, '/');
 
@@ -314,7 +314,7 @@ _unix_mkdirp(c3_c* pax_c)
 **  for future changes.
 */
 void
-u3_unix_save(c3_c* pax_c, u3_atom pad)
+u3_unix_save(const c3_c* pax_c, u3_atom pad)
 {
   c3_i  fid_i;
   c3_w  lod_w, len_w, fln_w, rit_w;
@@ -406,7 +406,7 @@ _unix_rm_r_cb(const c3_c* pax_c,
 /* _unix_rm_r(): rm -r directory
 */
 static void
-_unix_rm_r(c3_c* pax_c)
+_unix_rm_r(const c3_c* pax_c)
 {
   if ( 0 > nftw(pax_c, _unix_rm_r_cb, 100, FTW_DEPTH | FTW_PHYS )
        && ENOENT != errno) {
@@ -417,7 +417,7 @@ _unix_rm_r(c3_c* pax_c)
 /* _unix_mkdir(): mkdir, asserting.
 */
 static void
-_unix_mkdir(c3_c* pax_c)
+_unix_mkdir(const c3_c* pax_c)
 {
   if ( 0 != c3_mkdir(pax_c, 0755) && EEXIST != errno) {
     u3l_log("error mkdiring %s: %s", pax_c, strerror(errno));
@@ -428,7 +428,7 @@ _unix_mkdir(c3_c* pax_c)
 /* _unix_write_file_hard(): write to a file, overwriting what's there
 */
 static c3_w
-_unix_write_file_hard(c3_c* pax_c, u3_noun mim)
+_unix_write_file_hard(const c3_c* pax_c, u3_noun mim)
 {
   c3_i  fid_i = c3_open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_w  len_w, rit_w, siz_w, mug_w = 0;
@@ -530,9 +530,9 @@ _unix_write_file_soft_go:
 }
 
 static void
-_unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c);
+_unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, const c3_c* pax_c);
 static void
-_unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c);
+_unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, const c3_c* pax_c);
 
 /* _unix_get_mount_point(): retrieve or create mount point
 */
@@ -812,7 +812,7 @@ _unix_commit_mount_point(u3_unix* unx_u, u3_noun mon)
 /* _unix_watch_file(): initialize file
 */
 static void
-_unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
+_unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, const c3_c* pax_c)
 {
   // initialize fil_u
 
@@ -833,7 +833,7 @@ _unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
 /* _unix_watch_dir(): initialize directory
 */
 static void
-_unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
+_unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, const c3_c* pax_c)
 {
   // initialize dir_u
 
@@ -1159,7 +1159,7 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
 **  XX deduplicate with _unix_update_file()
 */
 static u3_noun
-_unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
+_unix_initial_update_file(const c3_c* pax_c, const c3_c* bas_c)
 {
   struct stat buf_u;
   c3_i  fid_i = c3_open(pax_c, O_RDONLY, 0644);
@@ -1215,7 +1215,7 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
 **  XX deduplicate with _unix_update_dir()
 */
 static u3_noun
-_unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
+_unix_initial_update_dir(const c3_c* pax_c, const c3_c* bas_c)
 {
   u3_noun can = u3_nul;
 
@@ -1277,7 +1277,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
 /* u3_unix_initial_into_card(): create initial filesystem sync card.
 */
 u3_noun
-u3_unix_initial_into_card(c3_c* arv_c)
+u3_unix_initial_into_card(const c3_c* arv_c)
 {
   u3_noun can = _unix_initial_update_dir(arv_c, arv_c);
 
